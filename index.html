@@ -115,11 +115,6 @@
         }
 
         /* Logo Loading Animations */
-        @keyframes logo-zoom-pulse {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
 
         @keyframes nav-logo-entrance {
             from { transform: translateX(30px); opacity: 0; }
@@ -149,110 +144,75 @@
         .reveal-delay-300 { transition-delay: 0.3s; }
         .reveal-delay-400 { transition-delay: 0.4s; }
 
-        /* Modal Overlay Styles */
-        .modal-backdrop {
-            backdrop-filter: blur(8px);
-            background-color: rgba(11, 19, 32, 0.85);
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Preloader */
-        #site-preloader {
+
+        /* Smooth, compact floating customer review notification */
+        #floating-review-toast {
             position: fixed;
-            inset: 0;
-            background-color: #0B1320;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.6s ease, visibility 0.6s;
+            top: 50%;
+            right: 12px;
+            z-index: 45;
+            width: min(236px, calc(100vw - 24px));
+            padding: 10px 12px;
+            color: #fff;
+            background: rgba(11, 19, 32, 0.94);
+            border-right: 3px solid #0F9D87;
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(22px, -50%) scale(0.97);
+            transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+            backdrop-filter: blur(8px);
+            will-change: opacity, transform;
         }
-        
-        .preloader-content {
-            text-align: center;
-            animation: logo-zoom-pulse 1.5s ease-out forwards;
+        #floating-review-toast.is-visible {
+            opacity: 1;
+            transform: translate(0, -50%) scale(1);
         }
-        
-        .loading-bar {
-            width: 150px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 20px auto 0;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
+        #floating-review-toast .review-stars {
+            color: #FBBF24;
+            font-size: 12px;
+            line-height: 1;
+            letter-spacing: 1px;
+            white-space: nowrap;
         }
-        
-        .loading-bar-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 0%;
-            background: #E62E2D;
-            transition: width 0.4s ease;
+        #floating-review-toast .review-divider {
+            height: 1px;
+            margin: 7px 0;
+            background: rgba(255, 255, 255, 0.16);
+        }
+        #floating-review-toast .review-copy {
+            font-size: 11px;
+            line-height: 1.55;
+        }
+        @media (max-width: 640px) {
+            #floating-review-toast {
+                right: 8px;
+                width: min(190px, calc(100vw - 16px));
+                padding: 8px 9px;
+            }
+            #floating-review-toast .review-copy {
+                font-size: 10px;
+            }
+            #floating-review-toast .review-stars {
+                font-size: 11px;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #floating-review-toast {
+                transition: none;
+            }
         }
     </style>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark antialiased overflow-x-hidden selection:bg-primary selection:text-white pb-20 md:pb-0">
 
-<!-- Attractive Preloader -->
-<div id="site-preloader">
-    <div class="preloader-content">
-        <img src="https://ik.imagekit.io/mkek1asn5/images/logo-start-move.webp" alt="Loading Logo" class="h-16 md:h-20 w-auto mb-4">
-        <div class="loading-bar">
-            <div id="loader-progress" class="loading-bar-progress"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Contact Modal (2 Steps) -->
-<div id="call-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
-    <div class="modal-backdrop absolute inset-0" onclick="closeCallModal()"></div>
-    <div class="bg-surface-light dark:bg-surface-dark w-full max-w-md rounded-3xl shadow-2xl relative z-[110] overflow-hidden transform transition-all scale-95 duration-300" id="modal-content">
-        <!-- Step 1: Confirmation -->
-        <div id="call-step-1" class="p-6 md:p-8 text-center block">
-            <div class="w-16 h-16 md:w-20 md:h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span class="material-icons-outlined text-3xl md:text-4xl text-primary">contact_support</span>
-            </div>
-            <h3 class="text-xl md:text-2xl font-bold text-secondary dark:text-white mb-3">هل تريد الاتصال بنا الآن؟</h3>
-            <p class="text-text-muted-light dark:text-text-muted-dark mb-6 md:mb-8 text-sm md:text-base">سيظهر لك رقم الهاتف المباشر لقسم المبيعات بعد التأكيد.</p>
-            <div class="flex flex-col gap-3">
-                <button onclick="showCallStep2()" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3.5 md:py-4 rounded-xl transition shadow-lg shadow-red-500/30 text-base">
-                    نعم، أريد الرقم الآن
-                </button>
-                <button onclick="closeCallModal()" class="w-full bg-gray-100 dark:bg-gray-800 text-secondary dark:text-white font-semibold py-3.5 md:py-4 rounded-xl transition hover:bg-gray-200 text-base">
-                    إلغاء
-                </button>
-            </div>
-        </div>
-
-        <!-- Step 2: Display Number -->
-        <div id="call-step-2" class="p-6 md:p-8 text-center hidden">
-            <div class="w-16 h-16 md:w-20 md:h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-                <span class="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></span>
-                <span class="material-icons-outlined text-3xl md:text-4xl text-green-500 relative">call</span>
-            </div>
-            <h3 class="text-lg md:text-xl font-bold text-secondary dark:text-white mb-2">رقم التواصل المباشر</h3>
-            <p class="text-text-muted-light dark:text-text-muted-dark mb-6 text-sm">اضغط على الرقم أدناه لبدء المكالمة</p>
-            
-            <a href="tel:01024759923" id="gtm-call-trigger" class="inline-flex items-center gap-3 md:gap-4 bg-secondary dark:bg-gray-900 border-2 border-primary/20 p-4 md:p-5 rounded-2xl group hover:border-primary transition-all w-full justify-center shadow-xl">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <span class="material-icons-outlined text-xl md:text-2xl">phone_iphone</span>
-                </div>
-                <span class="text-xl md:text-2xl font-black tracking-widest text-primary" dir="ltr">01024759923</span>
-            </a>
-
-            <button onclick="closeCallModal()" class="mt-6 md:mt-8 text-sm text-text-muted-light underline">إغلاق النافذة</button>
-        </div>
-    </div>
-</div>
-
 <!-- Header Top Bar -->
 <div class="bg-secondary text-white text-[11px] md:text-sm py-2 px-4">
 <div class="container mx-auto flex justify-between items-center">
 <div class="flex items-center space-x-3 md:space-x-4 space-x-reverse">
-<button onclick="openCallModal()" class="flex items-center hover:text-primary transition font-bold"><span class="material-icons-outlined text-xs md:text-sm ml-1 text-primary">phone</span> ٠١٠٢٤٧٥٩٩٢٣</button>
+<a href="tel:01024759923" aria-label="اتصل الآن على 01024759923" class="flex items-center hover:text-primary transition font-bold"><span class="material-icons-outlined text-xs md:text-sm ml-1 text-primary">phone</span> ٠١٠٢٤٧٥٩٩٢٣</a>
 <span class="hidden sm:flex items-center"><span class="material-icons-outlined text-xs md:text-sm ml-1 text-primary">schedule</span> يومياً: ٨:٠٠ صباحاً - ١٠:٠٠ مساءً</span>
 </div>
 <div class="flex items-center space-x-3 md:space-x-4 space-x-reverse">
@@ -270,7 +230,7 @@
 <div class="container mx-auto px-4 py-3">
 <div class="flex justify-between items-center">
 <a href="#" class="flex items-center animate-logo-entrance">
-    <img src="https://ik.imagekit.io/mkek1asn5/images/logo-start-move.webp" alt="ستارت موف لنقل العفش" class="h-10 md:h-14 w-auto object-contain">
+    <img src="https://ik.imagekit.io/mkek1asn5/images/logo-start-move.webp" alt="ستارت موف لنقل العفش" class="h-10 md:h-14 w-auto object-contain" loading="eager" decoding="async">
 </a>
 <div class="hidden lg:flex items-center space-x-8 space-x-reverse font-medium">
 <a class="text-primary" href="#">الرئيسية</a>
@@ -280,7 +240,7 @@
 <a class="text-text-light dark:text-text-dark hover:text-primary transition" href="#">اتصل بنا</a>
 </div>
 <div class="hidden lg:flex items-center space-x-4 space-x-reverse">
-<div class="flex items-center text-right cursor-pointer" onclick="openCallModal()">
+<a href="tel:01024759923" aria-label="اتصل بخدمة العملاء على 01024759923" class="flex items-center text-right cursor-pointer">
 <div class="bg-background-light dark:bg-gray-800 p-2 rounded-full ml-3">
 <span class="material-icons-outlined text-primary">support_agent</span>
 </div>
@@ -288,7 +248,7 @@
 <span class="block text-xs text-text-muted-light dark:text-text-muted-dark">هل لديك استفسار؟</span>
 <span class="block font-bold text-secondary dark:text-white text-sm" dir="ltr">01024759923</span>
 </div>
-</div>
+</a>
 <button class="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded font-bold transition shadow-lg shadow-red-500/30">
                         اطلب عرض سعر
                     </button>
@@ -308,7 +268,7 @@
         <!-- Slide 1 -->
         <div class="slide-active bg-secondary">
             <div class="absolute inset-0 overflow-hidden">
-                <img alt="شاحنة نقل حديثة" class="w-full h-full object-cover object-center slide-img transition-transform duration-[10000ms]" src="https://ik.imagekit.io/mkek1asn5/General/3dd660d2-1b70-4a77-8d97-4e56b6e12b1a.webp"/>
+                <img alt="شاحنة نقل حديثة" class="w-full h-full object-cover object-center slide-img transition-transform duration-[10000ms]" src="https://ik.imagekit.io/mkek1asn5/General/3dd660d2-1b70-4a77-8d97-4e56b6e12b1a.webp"/ loading="eager" fetchpriority="high" decoding="async">
                 <div class="absolute inset-0 bg-secondary/30 z-10"></div>
             </div>
             <!-- Diagonal Overlay: Adjusted to bg-primary/80 for a lighter look -->
@@ -337,7 +297,7 @@
                             خدماتنا
                             <span class="material-icons-outlined mr-2">arrow_back</span>
                         </button>
-                        <div onclick="openCallModal()" class="flex items-center justify-start gap-3 bg-black/30 p-2 pr-4 rounded border border-white/10 backdrop-blur-sm cursor-pointer hover:bg-black/50 transition">
+                        <a href="tel:01024759923" aria-label="اتصل بنا الآن على 01024759923" class="flex items-center justify-start gap-3 bg-black/30 p-2 pr-4 rounded border border-white/10 backdrop-blur-sm cursor-pointer hover:bg-black/50 transition">
                             <div class="bg-white/10 p-2 rounded-full">
                                 <span class="material-icons-outlined text-white text-sm md:text-base">phone_in_talk</span>
                             </div>
@@ -345,7 +305,7 @@
                                 <span class="block text-[10px] text-white/70">اتصل بنا الآن</span>
                                 <span class="block font-bold text-base md:text-lg" dir="ltr">01024759923</span>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -354,7 +314,7 @@
         <!-- Slide 2 -->
         <div class="slide-hidden bg-secondary">
             <div class="absolute inset-0 overflow-hidden">
-                <img alt="تغليف احترافي" class="w-full h-full object-cover object-center slide-img transition-transform duration-[10000ms]" src="https://ik.imagekit.io/mkek1asn5/General/122.webp"/>
+                <img alt="تغليف احترافي" class="w-full h-full object-cover object-center slide-img transition-transform duration-[10000ms]" src="https://ik.imagekit.io/mkek1asn5/General/122.webp"/ loading="lazy" decoding="async">
                 <div class="absolute inset-0 bg-secondary/30 z-10"></div>
             </div>
             <!-- Diagonal Overlay: Adjusted to bg-secondary/80 for a lighter look -->
@@ -386,7 +346,7 @@
         <!-- Slide 3 -->
         <div class="slide-hidden bg-secondary">
             <div class="absolute inset-0 overflow-hidden">
-                <img alt="ونش رفع عفش" class="w-full h-full object-cover object-center slide-img transition-transform duration-[10000ms]" src="https://ik.imagekit.io/mkek1asn5/General/0000.webp"/>
+                <img alt="ونش رفع عفش" class="w-full h-full object-cover object-center slide-img transition-transform duration-[10000ms]" src="https://ik.imagekit.io/mkek1asn5/General/0000.webp"/ loading="lazy" decoding="async">
                 <div class="absolute inset-0 bg-secondary/30 z-10"></div>
             </div>
             <!-- Diagonal Overlay: Adjusted to bg-gray-900/80 for a lighter look -->
@@ -437,11 +397,11 @@
     <div class="relative w-[280px] sm:w-[400px] lg:w-[450px] mx-auto">
         <!-- Big Image -->
         <div class="relative z-10 rounded-full overflow-hidden w-full h-[280px] sm:h-[400px] lg:h-[450px] border-8 border-white dark:border-gray-700 shadow-2xl">
-            <img alt="عامل نقل" class="w-full h-full object-cover" src="https://ik.imagekit.io/mkek1asn5/General/3.webp"/>
+            <img alt="عامل نقل" class="w-full h-full object-cover" src="https://ik.imagekit.io/mkek1asn5/General/3.webp"/ loading="lazy" decoding="async">
         </div>
         <!-- Small Overlapping Image - Adjusted to show on mobile with same structure -->
         <div class="absolute -bottom-4 -left-4 md:bottom-0 md:left-0 z-20 w-32 h-32 sm:w-48 sm:h-48 rounded-full overflow-hidden border-8 border-surface-light dark:border-surface-dark shadow-xl">
-            <img alt="تغليف كرتون" class="w-full h-full object-cover" src="https://ik.imagekit.io/mkek1asn5/General/130233523_205221037805952_8161582607618086365_n.webp"/>
+            <img alt="تغليف كرتون" class="w-full h-full object-cover" src="https://ik.imagekit.io/mkek1asn5/General/130233523_205221037805952_8161582607618086365_n.webp"/ loading="lazy" decoding="async">
         </div>
     </div>
 </div>
@@ -494,7 +454,7 @@
 <div class="bg-white dark:bg-surface-dark rounded-xl shadow-lg hover:shadow-2xl transition duration-300 group overflow-visible reveal reveal-delay-100">
 <div class="relative">
 <div class="h-44 md:h-48 overflow-hidden rounded-t-xl">
-<img alt="نقل العفش" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/117361235_171114901222055_1323009311216674629_n.webp"/>
+<img alt="نقل العفش" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/117361235_171114901222055_1323009311216674629_n.webp"/ loading="lazy" decoding="async">
 </div>
 <div class="absolute -bottom-6 left-6 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-surface-dark z-10">
 <span class="material-icons-outlined">weekend</span>
@@ -514,7 +474,7 @@
 <div class="bg-white dark:bg-surface-dark rounded-xl shadow-lg hover:shadow-2xl transition duration-300 group overflow-visible reveal reveal-delay-200">
 <div class="relative">
 <div class="h-44 md:h-48 overflow-hidden rounded-t-xl">
-<img alt="تغليف العفش" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/88064001_1044534852595285_8717320216738004992_n.webp"/>
+<img alt="تغليف العفش" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/88064001_1044534852595285_8717320216738004992_n.webp"/ loading="lazy" decoding="async">
 </div>
 <div class="absolute -bottom-6 left-6 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-surface-dark z-10">
 <span class="material-icons-outlined">inventory_2</span>
@@ -534,7 +494,7 @@
 <div class="bg-white dark:bg-surface-dark rounded-xl shadow-lg hover:shadow-2xl transition duration-300 group overflow-visible reveal reveal-delay-300">
 <div class="relative">
 <div class="h-44 md:h-48 overflow-hidden rounded-t-xl">
-<img alt="فك وتركيب" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/19656974_786248624868326_520451152289840189_n.webp"/>
+<img alt="فك وتركيب" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/19656974_786248624868326_520451152289840189_n.webp"/ loading="lazy" decoding="async">
 </div>
 <div class="absolute -bottom-6 left-6 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-surface-dark z-10">
 <span class="material-icons-outlined">handyman</span>
@@ -607,7 +567,7 @@
 <!-- Call to Action Section -->
 <section class="py-16 md:py-20 relative bg-primary">
 <div class="absolute inset-0 z-0">
-<img alt="Warehouse" class="w-full h-full object-cover opacity-10 mix-blend-multiply" src="https://ik.imagekit.io/mkek1asn5/General/15037087_172328606564720_2620213820621837403_n.webp"/>
+<img alt="Warehouse" class="w-full h-full object-cover opacity-10 mix-blend-multiply" src="https://ik.imagekit.io/mkek1asn5/General/15037087_172328606564720_2620213820621837403_n.webp"/ loading="lazy" decoding="async">
 </div>
 <div class="container mx-auto px-4 relative z-10">
 <div class="flex flex-col lg:flex-row gap-10 md:gap-12 items-center">
@@ -701,7 +661,7 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
 <div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg group reveal reveal-delay-100">
 <div class="relative h-52 md:h-60 overflow-hidden">
-<img alt="Maadi Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/3.webp"/>
+<img alt="Maadi Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/3.webp"/ loading="lazy" decoding="async">
 <div class="absolute top-4 right-4 bg-primary text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded">مناطق</div>
 </div>
 <div class="p-6">
@@ -722,7 +682,7 @@
 </div>
 <div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg group reveal reveal-delay-200">
 <div class="relative h-52 md:h-60 overflow-hidden">
-<img alt="Sheikh Zayed Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/122.webp"/>
+<img alt="Sheikh Zayed Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/122.webp"/ loading="lazy" decoding="async">
 <div class="absolute top-4 right-4 bg-secondary text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded">المدن الجديدة</div>
 </div>
 <div class="p-6">
@@ -743,7 +703,7 @@
 </div>
 <div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg group reveal reveal-delay-300">
 <div class="relative h-52 md:h-60 overflow-hidden">
-<img alt="October Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/0000.webp"/>
+<img alt="October Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/0000.webp"/ loading="lazy" decoding="async">
 <div class="absolute top-4 right-4 bg-primary text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded">الجيزة</div>
 </div>
 <div class="p-6">
@@ -765,7 +725,7 @@
 <!-- Article 4: Fifth Settlement -->
 <div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg group mt-6 md:mt-0 reveal reveal-delay-100">
     <div class="relative h-52 md:h-60 overflow-hidden">
-        <img alt="Fifth Settlement Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/3dd660d2-1b70-4a77-8d97-4e56b6e12b1a.webp"/>
+        <img alt="Fifth Settlement Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/3dd660d2-1b70-4a77-8d97-4e56b6e12b1a.webp"/ loading="lazy" decoding="async">
         <div class="absolute top-4 right-4 bg-primary text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded">القاهرة الجديدة</div>
     </div>
     <div class="p-6">
@@ -788,7 +748,7 @@
 <!-- Article 5: Nasr City -->
 <div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg group mt-6 md:mt-0 reveal reveal-delay-200">
     <div class="relative h-52 md:h-60 overflow-hidden">
-        <img alt="Nasr City Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/130233523_205221037805952_8161582607618086365_n.webp"/>
+        <img alt="Nasr City Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/130233523_205221037805952_8161582607618086365_n.webp"/ loading="lazy" decoding="async">
         <div class="absolute top-4 right-4 bg-secondary text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded">شرق القاهرة</div>
     </div>
     <div class="p-6">
@@ -811,7 +771,7 @@
 <!-- Article 6: El Shorouk -->
 <div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg group mt-6 md:mt-0 reveal reveal-delay-300">
     <div class="relative h-52 md:h-60 overflow-hidden">
-        <img alt="El Shorouk Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/15037087_172328606564720_2620213820621837403_n.webp"/>
+        <img alt="El Shorouk Moving" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" src="https://ik.imagekit.io/mkek1asn5/General/15037087_172328606564720_2620213820621837403_n.webp"/ loading="lazy" decoding="async">
         <div class="absolute top-4 right-4 bg-primary text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded">المدن الجديدة</div>
     </div>
     <div class="p-6">
@@ -837,7 +797,7 @@
 <!-- Stats Section -->
 <section class="relative bg-secondary py-12 md:py-16">
 <div class="absolute inset-0 overflow-hidden">
-<img alt="background" class="w-full h-full object-cover opacity-10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXVVcnU6hpt_uqfFyVt_HOCfoEEqjS72qinqZXHlL2VxTUKPcOLY3xkU6-r-rMFl_TTpRXtvAzEgKTDqP2pGwAE0tzy4qAz6SbNtXCcCu8WdImq8KLQr7Wip3WoB1mu5gvHjce5vqlF7ePUQKz4RbtekcTNkrSV7_zUArLNRFOuuP-_lBNlAEddULzAk9iHCwmYUjXksdNQ5w6ExUuiP1Q-kM6tXCdpmePlnTmlfLZdhE6KRj1wrTJhYB2aj8T02clsWv9m68NCZc"/>
+<img alt="background" class="w-full h-full object-cover opacity-10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXVVcnU6hpt_uqfFyVt_HOCfoEEqjS72qinqZXHlL2VxTUKPcOLY3xkU6-r-rMFl_TTpRXtvAzEgKTDqP2pGwAE0tzy4qAz6SbNtXCcCu8WdImq8KLQr7Wip3WoB1mu5gvHjce5vqlF7ePUQKz4RbtekcTNkrSV7_zUArLNRFOuuP-_lBNlAEddULzAk9iHCwmYUjXksdNQ5w6ExUuiP1Q-kM6tXCdpmePlnTmlfLZdhE6KRj1wrTJhYB2aj8T02clsWv9m68NCZc"/ loading="lazy" decoding="async">
 </div>
 <div class="container mx-auto px-4 relative z-10">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center text-white divide-x-0 md:divide-x md:divide-x-reverse divide-white/10">
@@ -881,19 +841,19 @@
 <h3 class="text-xl md:text-2xl font-bold mb-2">تبحث عن أفضل خدمة نقل؟</h3>
 <p class="text-gray-400 text-xs md:text-sm">بصفتنا خبراء، سنساعدك على تنظيم عملية النقل بكل سهولة.</p>
 </div>
-<div onclick="openCallModal()" class="flex items-center cursor-pointer group bg-primary/10 p-4 rounded-2xl border border-primary/20 hover:bg-primary/20 transition">
+<a href="tel:01024759923" aria-label="اتصل الآن على 01024759923" class="flex items-center cursor-pointer group bg-primary/10 p-4 rounded-2xl border border-primary/20 hover:bg-primary/20 transition">
 <div class="bg-primary p-2 md:p-3 rounded-full ml-3 md:ml-4 group-hover:scale-110 transition">
 <span class="material-icons-outlined text-white text-xl md:text-2xl">phone</span>
 </div>
 <span class="text-xl md:text-2xl font-bold" dir="ltr">01024759923</span>
-</div>
+</a>
 </div>
 </div>
 <div class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 border-b border-gray-800 pb-12">
 <div>
 <h4 class="text-lg font-bold mb-6 border-b-2 border-primary inline-block pb-1">عن الشركة</h4>
 <div class="mb-6">
-    <img src="https://ik.imagekit.io/mkek1asn5/images/logo-start-move.webp" alt="Logo" class="h-10 md:h-12 w-auto object-contain brightness-0 invert opacity-80">
+    <img src="https://ik.imagekit.io/mkek1asn5/images/logo-start-move.webp" alt="Logo" class="h-10 md:h-12 w-auto object-contain brightness-0 invert opacity-80" loading="lazy" decoding="async">
 </div>
 <p class="text-gray-400 mb-6 text-xs md:text-sm leading-relaxed">
                     نحن نعمل بشغف لمواجهة التحديات وخلق تجربة نقل مريحة وسلسة لجميع عملائنا. هدفنا هو رضاكم التام.
@@ -943,75 +903,42 @@
 </div>
 </footer>
 
-<!-- Floating Call Button Trigger -->
-<button onclick="openCallModal()" class="fixed bottom-5 left-5 z-50 flex items-center bg-primary text-white rounded-full shadow-2xl shadow-primary/50 hover:bg-red-700 transition-all transform hover:-translate-y-1 hover:scale-105 group overflow-hidden border-2 border-white/20 h-14 md:h-auto">
-    <div class="hidden xs:flex px-4 md:px-5 py-3 flex-col items-start justify-center pl-6">
-      <span class="text-[9px] md:text-xs font-light text-red-100 mb-0.5">أسعار مناسبة جداً</span>
-      <span class="font-bold text-xs md:text-base whitespace-nowrap">إتصل واعرف اسعارنا</span>
+<!-- Floating Direct Call Button with Promotional Strip -->
+<div class="fixed bottom-5 left-5 z-50 flex flex-col items-center gap-2">
+    <div class="inline-flex items-center justify-center gap-1.5 rounded-full bg-amber-400 text-slate-950 px-3.5 py-1.5 shadow-lg shadow-amber-900/20 border border-white/70 whitespace-nowrap">
+        <span class="material-icons-outlined text-sm" aria-hidden="true">local_offer</span>
+        <span class="text-[11px] md:text-xs font-extrabold tracking-tight">اتصل الآن بخصم 25%</span>
     </div>
-    <div class="w-12 h-12 md:w-14 md:h-14 bg-white/20 flex items-center justify-center rounded-full md:mr-1 backdrop-blur-sm relative shrink-0">
-        <span class="absolute w-full h-full rounded-full bg-white/30 animate-ping opacity-75"></span>
-        <span class="material-icons-outlined text-xl md:text-2xl animate-wiggle relative z-10">phone_in_talk</span>
+    <a href="tel:01024759923"
+       aria-label="اتصل الآن بخصم 25% على الرقم 01024759923"
+       class="inline-flex items-center gap-3 bg-teal-700 hover:bg-teal-800 text-white rounded-full shadow-2xl shadow-teal-900/35 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 border border-teal-300/40 px-4 py-3 md:px-5 focus:outline-none focus-visible:ring-4 focus-visible:ring-teal-300">
+        <span class="flex flex-col items-start text-right">
+            <span class="text-[10px] md:text-xs text-teal-100">للحجز والاستفسار</span>
+            <span class="font-extrabold text-sm md:text-base whitespace-nowrap tracking-wide" dir="ltr">01024759923</span>
+            <span class="text-[10px] md:text-xs font-semibold text-white">اضغط للاتصال المباشر</span>
+        </span>
+        <span class="w-11 h-11 md:w-12 md:h-12 bg-white flex items-center justify-center rounded-full relative shrink-0 shadow-md">
+            <span class="absolute inset-0 rounded-full bg-white/30 animate-ping"></span>
+            <span class="material-icons-outlined text-teal-700 text-2xl md:text-3xl relative z-10">call</span>
+        </span>
+    </a>
+</div>
+
+<!-- Floating Customer Reviews -->
+<div id="floating-review-toast" role="status" aria-live="polite" aria-atomic="true">
+    <div class="flex items-center justify-between gap-2">
+        <span class="text-[10px] font-bold text-white/75">آراء العملاء</span>
+        <span id="floating-review-stars" class="review-stars" aria-label=" خمس نجوم">★★★★★</span>
     </div>
-</button>
+    <div class="review-divider"></div>
+    <p id="floating-review-copy" class="review-copy"></p>
+    <p id="floating-review-author" class="mt-1 text-[9px] text-white/60"></p>
+</div>
 
 <script>
-    // Preloader and Initial Animations
-    window.addEventListener('load', () => {
-        const preloader = document.getElementById('site-preloader');
-        const progress = document.getElementById('loader-progress');
-        
-        // Simulating loading progress
-        let width = 0;
-        const interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
-                // Hide Preloader
-                preloader.style.opacity = '0';
-                preloader.style.visibility = 'hidden';
-                
-                // Initialize AOS-like reveals manually
-                initReveals();
-            } else {
-                width += 5;
-                progress.style.width = width + '%';
-            }
-        }, 30);
-    });
+    // Start scroll animations immediately; do not wait for all page assets.
+    initReveals();
 
-    // Modal Functions
-    const modal = document.getElementById('call-modal');
-    const modalContent = document.getElementById('modal-content');
-    const step1 = document.getElementById('call-step-1');
-    const step2 = document.getElementById('call-step-2');
-
-    function openCallModal() {
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            modalContent.classList.remove('scale-95');
-        }, 10);
-        step1.classList.remove('hidden');
-        step2.classList.add('hidden');
-    }
-
-    function showCallStep2() {
-        step1.classList.add('opacity-0');
-        setTimeout(() => {
-            step1.classList.add('hidden');
-            step1.classList.remove('opacity-0');
-            step2.classList.remove('hidden');
-            step2.classList.add('fade-in');
-        }, 300);
-    }
-
-    function closeCallModal() {
-        modal.classList.add('opacity-0');
-        modalContent.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 300);
-    }
 
     // Slider Logic
     const sliderContainer = document.getElementById('hero-slider');
@@ -1120,5 +1047,54 @@
 
         counters.forEach(counter => counterObserver.observe(counter));
     }
+
+    // Demo review copy for layout preview only.
+    // Replace these entries with real, permissioned customer reviews before publishing.
+    const floatingReviews = [
+        { rating: 5, text: "تجربة نقل مريحة وتعامل محترم من بداية التواصل حتى التسليم.", author: " 1" },
+        { rating: 5, text: "فريق العمل كان منظمًا واهتم بتغليف قطع الأثاث.", author: " 2" },
+        { rating: 5, text: "سرعة في التنفيذ واهتمام بالتفاصيل أثناء النقل.", author: " 3" },
+        { rating: 5, text: "خدمة الونش ساعدتنا في نقل الأثاث بسهولة.", author: " 4" },
+        { rating: 5, text: "التعامل كان واضحًا والخدمة تمت بصورة منظمة.", author: " 5" },
+        { rating: 5, text: "التغليف كان جيدًا والفريق متعاونًا طوال الوقت.", author: " 6" },
+        { rating: 5, text: "وصل الأثاث وتم ترتيبه في المكان الجديد بشكل جيد.", author: " 7" },
+        { rating: 5, text: "تجربة سهلة من أول مكالمة وحتى انتهاء عملية النقل.", author: " 8" },
+        { rating: 5, text: "طاقم العمل محترف والتواصل كان سريعًا.", author: " 9" },
+        { rating: 5, text: "خدمة جيدة واهتمام بالحفاظ على الأثاث أثناء النقل.", author: " 10" }
+    ];
+
+    const reviewToast = document.getElementById('floating-review-toast');
+    const reviewCopy = document.getElementById('floating-review-copy');
+    const reviewAuthor = document.getElementById('floating-review-author');
+    const reviewStars = document.getElementById('floating-review-stars');
+    let currentReviewIndex = 0;
+
+    function renderFloatingReview(index) {
+        if (!reviewToast || !reviewCopy || !reviewAuthor || !reviewStars) return;
+
+        const review = floatingReviews[index];
+        // Fade the current review out completely before replacing its content.
+        reviewToast.classList.remove('is-visible');
+
+        window.setTimeout(() => {
+            reviewCopy.textContent = review.text;
+            reviewAuthor.textContent = review.author;
+            reviewStars.textContent = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            reviewStars.setAttribute('aria-label', `تقييم ${review.rating} من 5`);
+            window.requestAnimationFrame(() => {
+                reviewToast.classList.add('is-visible');
+            });
+        }, 560);
+    }
+
+    if (floatingReviews.length) {
+        renderFloatingReview(currentReviewIndex);
+        // Show one review after another every five seconds with a soft transition.
+        window.setInterval(() => {
+            currentReviewIndex = (currentReviewIndex + 1) % floatingReviews.length;
+            renderFloatingReview(currentReviewIndex);
+        }, 5000);
+    }
+
 </script>
 </body></html>
